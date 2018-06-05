@@ -1,6 +1,11 @@
 # SATCirc
 
-SATCirc is a combinatorial digital circuit varification tool.
+SATCirc is a combinatorial digital circuit verification tool.
+
+# Basic defualt gates
+* a b AND c: (¬a ∨ ¬b ∨  c)∧( a ∨ ¬c)∧( b ∨ ¬c)
+* a b  OR c: ( a ∨  b ∨ ¬c)∧(¬a ∨  c)∧(¬b ∨  c)
+* a   NOT C: (¬a ∨ ¬c)∧(a ∨ c)
 
 # Building
 
