@@ -27,11 +27,11 @@ namespace SATCirc {
     Var(std::string name, std::size_t number, VarSign sign = VarSign::PLUS);
 
     // Methods
-    std::size_t number();
-    std::string name();
-    VarSign sign();
-    bool hasName();
-    bool hasNumber();
+    std::size_t number() const;
+    std::string name() const;
+    VarSign sign() const;
+    bool hasName() const;
+    bool hasNumber() const;
     void assocNumber(std::size_t number, VarSign sign = VarSign::PLUS);
     void assocName(std::string name);
   };

@@ -29,11 +29,11 @@ Var::Var(string name, size_t number, VarSign sign) {
 }
 
 // Methods
-size_t  Var::number()    { return this->_number;    }
-string  Var::name()      { return this->_name;      }
-bool    Var::hasName()   { return this->_hasName;   }
-bool    Var::hasNumber() { return this->_hasNumber; }
-VarSign Var::sign()      { return this->_sign;      }
+size_t  Var::number()    const { return this->_number;    }
+string  Var::name()      const { return this->_name;      }
+bool    Var::hasName()   const { return this->_hasName;   }
+bool    Var::hasNumber() const { return this->_hasNumber; }
+VarSign Var::sign()      const { return this->_sign;      }
 
 void Var::assocNumber(size_t number, VarSign sign) {
   this->_hasNumber = true;
