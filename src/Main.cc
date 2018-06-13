@@ -22,12 +22,10 @@ int main(int argc, char **argv) {
   yylex_init(&scanner);
   yyset_in(f, scanner);
 
-  char felipe[] = "felipe";
-
   Circuit *circ = nullptr;
   yyparse(scanner, &circ);
 
-  cout << circ->name();
+  cout << circ->print() << endl;
   
   yylex_destroy(scanner);
   
