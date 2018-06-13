@@ -1,51 +1,66 @@
 // -*- mode: c++; -*-
 
 #include <vector>
+#include <string>
 
 #include "Var.h"
 #include "Cnf.h"
 
+using std::string;
+using std::to_string;
 using std::vector;
 using namespace SATCirc;
 
 // Clause
 // Constructors
-Clause::Clause(Var v) {
-  this->_variables.push_back(v);
+Clause::Clause(Var v) { _vars.push_back(v); }
+Clause::Clause(Var v, Var b) { _vars.push_back(v); _vars.push_back(b); }
+Clause::Clause(Var v, Var b, Var n) { _vars.push_back(v); _vars.push_back(b); _vars.push_back(n); }
+
+// Methods
+vector<Var> Clause::vars()  const { return _vars; }
+
+void Clause::addVar(Var v) { _vars.push_back(v); }
+void Clause::addVar(Var v, Var b) { _vars.push_back(v); _vars.push_back(b); }
+void Clause::addVar(Var v, Var b, Var n) { _vars.push_back(v); _vars.push_back(b); _vars.push_back(n); }
+
+string Clause::print() const {
+  string s;
+  s.append("(");
+  for(auto v : _vars) {s.append(to_string(v.num()) + " "); } s.pop_back();
+  s.append(")");
+  return s;
 }
 
-Clause::Clause(Var v, Var b) {
-  this->_variables.push_back(v);
-  this->_variables.push_back(b);
+// CNF
+// Constructors
+Cnf::Cnf(string name, unsigned numVar) {
+  _name = name; _numVar = numVar; _totalVar = 0;
 }
 
-Clause::Clause(Var v, Var b, Var n) {
-  this->_variables.push_back(v);
-  this->_variables.push_back(b);
-  this->_variables.push_back(n);
-}
-
-Clause::Clause(vector<Var> vars) {
-  this->_variables.insert(_variables.end(), vars.begin(), vars.end());
+Cnf::Cnf(string name, unsigned numVar, vector<Clause> clauses) {
+  _name = name; _numVar = numVar; _totalVar = 0; _clauses = clauses;
+  // Count all variables from clauses
+  for(auto const c : _clauses) _totalVar += c.vars().size();
 }
 
 // Methods
-bool        Clause::empty()     const { return this->_variables.empty(); }
-vector<Var> Clause::variables() const { return this->_variables;         }
+vector<Clause> Cnf::clauses() const { return _clauses; }
 
-void Clause::addVar(Var v) { this->_variables.push_back(v); }
-
-void Clause::addVar(Var v, Var b) {
-  this->_variables.push_back(v);
-  this->_variables.push_back(b);
+vector<Var> Cnf::variables() const {
+  vector<Var> vars;
+  for(auto c : _clauses) vars.insert(vars.end(), c.vars().begin(), c.vars().end());
+  return vars;
 }
 
-void Clause::addVar(Var v, Var b, Var n) {
-  this->_variables.push_back(v);
-  this->_variables.push_back(b);
-  this->_variables.push_back(n);
+void Cnf::addClause(Clause c) { _totalVar += c.vars().size(); _clauses.push_back(c); }
+void Cnf::addClause(vector<Clause> cs) {
+  for(auto const c : cs) _totalVar += c.vars().size();
+  cs.insert(_clauses.end(), cs.begin(), cs.end());
 }
 
-void Clause::addVar(vector<Var> vars) {
-  this->_variables.insert(_variables.end(), vars.begin(), vars.end());
+string Cnf::print() const {
+  string s(_name + " " + to_string(_numVar) + " ");
+  for(auto const c : _clauses) s.append(c.print());
+  return s;
 }

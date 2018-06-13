@@ -14,41 +14,42 @@ using namespace SATCirc;
 // Constructors
 Component::Component(string name) { _name = name; }
 Component::Component(string name, vector<Var> in, vector<Var> out) {
-  _name = name; _inputs = in; _outputs = out;
+  _name = name; _in = in; _out = out;
 }
 
 // Methods
-string      Component::name()    const { return _name;    }
-vector<Var> Component::inputs()  const { return _inputs;  }
-vector<Var> Component::outputs() const { return _outputs; }
+string      Component::name()    const { return _name; }
+vector<Var> Component::inputs()  const { return _in;   }
+vector<Var> Component::outputs() const { return _out;  }
+string      Component::print() const {
+  string s;
+  for(auto const i :_in) { s.append(i.print() + " "); }
+  s.append(_name + " ");
+  for(auto const o :_out) { s.append(o.print() + " "); } s.pop_back();
+  return s;
+}
 
-void Component::addInput(Var v)  { _inputs.push_back(v);  }
-void Component::addOutput(Var v) { _outputs.push_back(v); }
+void Component::addInput(Var v)  { _in.push_back(v);  }
+void Component::addOutput(Var v) { _out.push_back(v); }
 
-void Component::addInput(vector<Var> v)  { _inputs.insert(_inputs.begin(), v.begin(), v.end()); }
-void Component::addOutput(vector<Var> v) { _outputs.insert(_outputs.begin(), v.begin(), v.end()); }
+void Component::addInput(vector<Var> v)  { _in.insert(_in.begin(), v.begin(), v.end()); }
+void Component::addOutput(vector<Var> v) { _out.insert(_out.begin(), v.begin(), v.end()); }
 
 // Circuit
 // Constructors
 Circuit::Circuit(string name) { _name = name; }
-Circuit::Circuit(string name, vector<Var> in, vector<Var> out, vector<Component> c) {
-  _name = name; _input = in; _output = out; _components = c;
-}
+Circuit::Circuit(string name, vector<Component> c) { _name = name; _comp = c; }
 
 // Methods
-bool              Circuit::empty()      const { return _components.empty(); }
-string            Circuit::name()       const { return _name;               }
-vector<Var>       Circuit::inputs()     const { return _input;              }
-vector<Var>       Circuit::outputs()    const { return _output;             }
-vector<Var>       Circuit::internal()   const { return _internal;           }
-vector<Component> Circuit::components() const { return _components;         }
-
-void Circuit::addInput(Var v)           { _input.push_back(v);      }
-void Circuit::addOutput(Var v)          { _output.push_back(v);     }
-void Circuit::addComponent(Component c) { _components.push_back(c); }
-
-void Circuit::addInput(vector<Var> v)  { _input.insert(_input.end(), v.begin(), v.end());   }
-void Circuit::addOutput(vector<Var> v) { _output.insert(_output.end(), v.begin(), v.end()); }
-void Circuit::addComponent(vector<Component> c) {
-  _components.insert(_components.end(), c.begin(), c.end());
+string Circuit::name() const { return _name; }
+string Circuit::print() const {
+  string s(_name + " { ");
+  for(auto const c : _comp) s.append(c.print() + "; ");
+  s.append("}");
+  return s;
 }
+// vector<Var>       Circuit::vars()       const { return _vars; }
+vector<Component> Circuit::components() const { return _comp; }
+
+void Circuit::addComponent(Component c) { _comp.push_back(c); }
+void Circuit::addComponent(vector<Component> c) { _comp.insert(_comp.end(), c.begin(), c.end()); }
