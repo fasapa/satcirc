@@ -1,22 +1,22 @@
 %{
-#include <cstdlib>
-#include <string>
+#include<cstdlib>
+#include<string>
 
-#include "CircuitParser.h"
+//Ainda nao foi implementada
+#include "CnfParser.h"
+
 %}
 
 %option 8bit reentrant bison-bridge
 %option warn noyywrap nodefault
-%option outfile="CircuitScanner.c" header-file="CircuitScanner.h"
+%option outfile="CnfScanner.c" header-file="CnfScanner.h"
 
 DIGIT [0-9]
 
 %%
-
-\;                { return ';'; }
-\{                { return '{'; }
-\}                { return '}'; }
-{DIGIT}+          { yylval->VAR = std::atoi(yytext); return VAR; }
-[A-Z][a-zA-Z0-9]* { yylval->ID = new std::string(yytext); return ID; }
-[ \t\n]*  { }
-.        { printf("What is this: %s.\n", yytext); }
+[A-Z][A-Z0-9]* 	{printf("%s ",yytext);} {yylval->ID = new std::string(yytext); return ID}
+[\-]*[0-9]+			{printf("NUM ");}       {yylval->NUM = std::atoi(yytext); return NUM}
+\(   			{printf("( ");}			{return '('}
+\)				{printf(") ");}			{return ')'}
+[ \t\n]*  		{}
+.        		{printf("What is this: %s.\n", yytext);}
