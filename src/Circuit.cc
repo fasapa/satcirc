@@ -38,7 +38,9 @@ void Component::addOutput(vector<Var> v) { _out.insert(_out.begin(), v.begin(), 
 // Circuit
 // Constructors
 Circuit::Circuit(string name) { _name = name; }
-Circuit::Circuit(string name, vector<Component> c) { _name = name; _comp = c; }
+Circuit::Circuit(string name, vector<Component> c, unsigned size) {
+  _name = name; _comp = c; _vars = size;
+}
 
 // Methods
 string Circuit::name() const { return _name; }
@@ -48,6 +50,8 @@ string Circuit::print() const {
   s.append("}");
   return s;
 }
+
+unsigned Circuit::size() const { return _vars; }
 // vector<Var>       Circuit::vars()       const { return _vars; }
 vector<Component> Circuit::components() const { return _comp; }
 

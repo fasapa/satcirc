@@ -2,17 +2,20 @@
 #include <string>
 #include <vector>
 
+#include "Env.h"
 #include "Circuit.h"
 #include "CircuitParser.h"
 #include "CircuitScanner.h"
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
+void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg);
 %}
 
 %code requires {
     #include <vector>
     #include <string>
     #include <iostream>
+
+    #include "Env.h"
     #include "Circuit.h"
     using namespace std;
  }
@@ -24,10 +27,9 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
 %define parse.error verbose
 %define api.pure
 %lex-param {void *scanner}
-%parse-param {void *scanner} {SATCirc::Circuit **circ}
+%parse-param {void *scanner} {SATCirc::Circuit **circ} {SATCirc::EnvVar *env}
 
 %union {
-    SATCirc::Var *var;
     std::vector<SATCirc::Var> *vars;
     SATCirc::Component *comp;
     std::vector<SATCirc::Component> *comps;
@@ -35,7 +37,7 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
 }
 
 %token <id> ID
-%token <var> VAR
+%token <id> VAR
 %type <vars> variaveis
 %type <comp> component
 %type <comps> components
@@ -43,44 +45,44 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
 %%
 
 circuito:
-             ID '{' components '}' {
+             ID '[' variaveis ';' variaveis ']' '{' components '}' {
                  std::string nome = *($1);
-                 std::vector<SATCirc::Component> vc = *($3);
-                 *circ = new SATCirc::Circuit(nome, vc);
+                 std::vector<SATCirc::Var> in = *($3), out = *($5);
+                 std::vector<SATCirc::Component> vc = *($8);
+                 *circ = new SATCirc::Circuit(nome, vc, in.size() + out.size());
              }
         ;
 
 components:     component {
-                    SATCirc::Component c = *($1);
                     $$ = new std::vector<SATCirc::Component>();
-                    $$->push_back(c);
+                    $$->push_back(*($1));
              }
         |
                 components component {
-                    SATCirc::Component c = *($2);
                     std::vector<SATCirc::Component> *vc = $1;
-                    vc->push_back(c);
+                    vc->push_back(*($2));
                     $$ = vc;
              }
         ;
 
 component:      variaveis ID variaveis ';' {
-                    std::string nome = *($2);
-                    std::vector<SATCirc::Var> in, out;
-                    in = *($1); out = *($3);
-                    $$ = new SATCirc::Component(nome, in, out);
+                    $$ = new SATCirc::Component(*($2), *($1), *($3));
              }
         ;
 
 variaveis:
                 VAR           {
-                    SATCirc::Var v = *($1);
+                    SATCirc::Var v;
+                    if(env->in(*($1))) v = env->get(*($1));
+                    else { v = SATCirc::Var(true); env->insert(*($1), v); }
                     $$ = new std::vector<SATCirc::Var>();
                     $$->push_back(v);
              }
         |
                 variaveis VAR {
-                    SATCirc::Var v = *($2);
+                    SATCirc::Var v;
+                    if(env->in(*($2))) v = env->get(*($2));
+                    else { v = SATCirc::Var(true); env->insert(*($2),v); }
                     std::vector<SATCirc::Var> *vs = $1;
                     vs->push_back(v);
                     $$ = vs;
@@ -89,6 +91,7 @@ variaveis:
 
 %%
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg) {
+void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg) {
+    (void)scanner; (void)str; (void)env;
     fprintf(stderr, "Error: %s\n", msg);
 }

@@ -33,17 +33,18 @@ namespace SATCirc {
   class Circuit {
   private:
     std::string _name;
-    // std::vector<Var> _vars;
+    std::size_t _vars;
     std::vector<Component> _comp;
 
   public:
     // Constructors
     Circuit(std::string name);
-    Circuit(std::string name, std::vector<Component> c);
+    Circuit(std::string name, std::vector<Component> c, unsigned size);
 
     // Methods
     std::string name() const;
     std::string print() const;
+    unsigned size() const;
     // std::vector<Var> vars() const;
     std::vector<Component> components() const;
 
