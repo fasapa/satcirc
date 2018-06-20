@@ -20,7 +20,6 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, cha
     using namespace std;
  }
 
-
 %defines "CircuitParser.h"
 %output "CircuitParser.c"
 
