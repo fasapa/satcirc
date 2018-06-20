@@ -7,7 +7,7 @@
 #include "CnfParser.h"
 #include "CnfScanner.h"
 
-void yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
+void cnf_yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
 %}
 
 %code requires {
@@ -21,6 +21,8 @@ void yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
 
 %defines "CnfParser.h"
 %output "CnfParser.c"
+
+%name-prefix "cnf_yy"
 
 %define parse.error verbose
 %define api.pure
@@ -93,7 +95,7 @@ variaveis:
                 ;
 %%
 
-void yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg) {
+void cnf_yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg) {
     (void)scanner; (void)cnf;
     fprintf(stderr, "Error: %s\n", msg);
 }

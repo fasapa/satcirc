@@ -9,6 +9,7 @@
 %option 8bit reentrant bison-bridge
 %option warn noyywrap nodefault
 %option outfile="CnfScanner.c" header-file="CnfScanner.h"
+%option prefix="cnf_yy"
 
 %%
 \(                { return '('; }
