@@ -27,6 +27,8 @@ namespace SATCirc {
     void addVar(Var v);
     void addVar(Var v, Var b);
     void addVar(Var v, Var b, Var n);
+    void change(std::vector<Var> v);
+    bool bump(unsigned b, unsigned min);
 
     std::string print() const;
   };
@@ -41,10 +43,12 @@ namespace SATCirc {
 
   public:
     // Constructors
+    Cnf() = default;
     Cnf(std::string name, unsigned numVar);
     Cnf(std::string name, unsigned numVar, std::vector<Clause> clauses);
 
     // Methods
+    std::string name() const;
     // Retornar referência?
     std::vector<Clause> clauses() const;
     // Retornar referência?
@@ -52,6 +56,9 @@ namespace SATCirc {
     void addClause(Clause c);
     void addClause(std::vector<Clause> c);
     std::string print() const;
+    void change(std::vector<Var> v);
+    bool bump(unsigned b, unsigned min);
+    unsigned maxVal() const;
   };
 }
 

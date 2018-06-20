@@ -65,14 +65,16 @@
 #line 1 "CircuitParser.y" /* yacc.c:339  */
 
 #include <string>
+#include <vector>
 
+#include "Env.h"
 #include "Circuit.h"
 #include "CircuitParser.h"
 #include "CircuitScanner.h"
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
+void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg);
 
-#line 76 "CircuitParser.c" /* yacc.c:339  */
+#line 78 "CircuitParser.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -102,15 +104,18 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg);
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 11 "CircuitParser.y" /* yacc.c:355  */
+#line 13 "CircuitParser.y" /* yacc.c:355  */
 
+    #include <vector>
     #include <string>
     #include <iostream>
+
+    #include "Env.h"
     #include "Circuit.h"
     using namespace std;
  
 
-#line 114 "CircuitParser.c" /* yacc.c:355  */
+#line 119 "CircuitParser.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -127,12 +132,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
+#line 32 "CircuitParser.y" /* yacc.c:355  */
 
-  /* VAR  */
-  int VAR;
-  /* ID  */
-  std::string* ID;
-#line 136 "CircuitParser.c" /* yacc.c:355  */
+    std::vector<SATCirc::Var> *vars;
+    SATCirc::Component *comp;
+    std::vector<SATCirc::Component> *comps;
+    std::string *id;
+
+#line 143 "CircuitParser.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -142,13 +149,13 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int yyparse (void *scanner, SATCirc::Circuit **circ);
+int yyparse (void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env);
 
 #endif /* !YY_YY_CIRCUITPARSER_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-#line 152 "CircuitParser.c" /* yacc.c:358  */
+#line 159 "CircuitParser.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -390,16 +397,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   12
+#define YYLAST   19
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  8
+#define YYNTOKENS  10
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  7
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  15
+#define YYNSTATES  20
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -418,14 +425,14 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     7,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     6,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     5,     2,     7,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     5,     2,     6,     2,     2,     2,     2,
+       2,     2,     2,     8,     2,     9,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -445,7 +452,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    34,    34,    37,    38,    41,    44,    45
+       0,    48,    48,    56,    61,    68,    74,    82
 };
 #endif
 
@@ -454,8 +461,8 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "ID", "VAR", "'{'", "'}'", "';'",
-  "$accept", "circuito", "components", "component", "variaveis", YY_NULLPTR
+  "$end", "error", "$undefined", "ID", "VAR", "'['", "';'", "']'", "'{'",
+  "'}'", "$accept", "circuito", "components", "component", "variaveis", YY_NULLPTR
 };
 #endif
 
@@ -464,7 +471,7 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   123,   125,    59
+       0,   256,   257,   258,   259,    91,    59,    93,   123,   125
 };
 # endif
 
@@ -482,8 +489,8 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       4,     3,     1,     5,    -5,    -5,    -2,    -5,     2,    -5,
-      -5,     5,    -5,    -4,    -5
+       1,    -4,    15,    12,    -5,    -5,     4,    -5,    12,    -1,
+      10,    12,    -2,    -5,     9,    -5,    -5,    12,     5,    -5
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -491,20 +498,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     1,     6,     0,     3,     0,     2,
-       4,     0,     7,     0,     5
+       0,     0,     0,     0,     1,     6,     0,     7,     0,     0,
+       0,     0,     0,     3,     0,     2,     4,     0,     0,     5
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -5,    -5,    -5,     6,    -1
+      -5,    -5,    -5,     7,    -3
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     6,     7,     8
+      -1,     2,    12,    13,    14
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -512,34 +519,34 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      12,     4,     5,    14,     9,    11,    12,     1,     3,     5,
-      13,     0,    10
+       6,     3,     5,     7,     1,     9,    10,    15,     7,     7,
+       8,    19,    17,     7,    18,     4,     5,     0,    11,    16
 };
 
 static const yytype_int8 yycheck[] =
 {
-       4,     0,     4,     7,     6,     3,     4,     3,     5,     4,
-      11,    -1,     6
+       3,     5,     4,     4,     3,     8,     7,     9,     4,     4,
+       6,     6,     3,     4,    17,     0,     4,    -1,     8,    12
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     9,     5,     0,     4,    10,    11,    12,     6,
-      11,     3,     4,    12,     7
+       0,     3,    11,     5,     0,     4,    14,     4,     6,    14,
+       7,     8,    12,    13,    14,     9,    13,     3,    14,     6
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,     8,     9,    10,    10,    11,    12,    12
+       0,    10,    11,    12,    12,    13,    14,    14
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     4,     1,     2,     4,     1,     2
+       0,     2,     9,     1,     2,     4,     1,     2
 };
 
 
@@ -567,7 +574,7 @@ do                                                              \
     }                                                           \
   else                                                          \
     {                                                           \
-      yyerror (scanner, circ, YY_("syntax error: cannot back up")); \
+      yyerror (scanner, circ, env, YY_("syntax error: cannot back up")); \
       YYERROR;                                                  \
     }                                                           \
 while (0)
@@ -604,7 +611,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Type, Value, scanner, circ); \
+                  Type, Value, scanner, circ, env); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -615,12 +622,13 @@ do {                                                                      \
 `----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, SATCirc::Circuit **circ)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env)
 {
   FILE *yyo = yyoutput;
   YYUSE (yyo);
   YYUSE (scanner);
   YYUSE (circ);
+  YYUSE (env);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -636,12 +644,12 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 `--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, SATCirc::Circuit **circ)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env)
 {
   YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner, circ);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner, circ, env);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -674,7 +682,7 @@ do {                                                            \
 `------------------------------------------------*/
 
 static void
-yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, void *scanner, SATCirc::Circuit **circ)
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env)
 {
   unsigned long int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -687,8 +695,8 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, void *scanner,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        yystos[yyssp[yyi + 1 - yynrhs]],
-                       &yyvsp[(yyi + 1) - (yynrhs)]
-                                              , scanner, circ);
+                       &(yyvsp[(yyi + 1) - (yynrhs)])
+                                              , scanner, circ, env);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -696,7 +704,7 @@ yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule, void *scanner,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule, scanner, circ); \
+    yy_reduce_print (yyssp, yyvsp, Rule, scanner, circ, env); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -954,11 +962,12 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 `-----------------------------------------------*/
 
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, void *scanner, SATCirc::Circuit **circ)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env)
 {
   YYUSE (yyvaluep);
   YYUSE (scanner);
   YYUSE (circ);
+  YYUSE (env);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
@@ -976,7 +985,7 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, void *scanner, SAT
 `----------*/
 
 int
-yyparse (void *scanner, SATCirc::Circuit **circ)
+yyparse (void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env)
 {
 /* The lookahead symbol.  */
 int yychar;
@@ -1224,13 +1233,70 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 34 "CircuitParser.y" /* yacc.c:1646  */
-    { *circ = new SATCirc::Circuit(*((*(std::string**)(&yyvsp[-3]))));  }
-#line 1230 "CircuitParser.c" /* yacc.c:1646  */
+#line 48 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                 std::string nome = *((yyvsp[-8].id));
+                 std::vector<SATCirc::Var> in = *((yyvsp[-6].vars)), out = *((yyvsp[-4].vars));
+                 std::vector<SATCirc::Component> vc = *((yyvsp[-1].comps));
+                 *circ = new SATCirc::Circuit(nome, vc, in.size() + out.size());
+             }
+#line 1244 "CircuitParser.c" /* yacc.c:1646  */
+    break;
+
+  case 3:
+#line 56 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                    (yyval.comps) = new std::vector<SATCirc::Component>();
+                    (yyval.comps)->push_back(*((yyvsp[0].comp)));
+             }
+#line 1253 "CircuitParser.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 61 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                    std::vector<SATCirc::Component> *vc = (yyvsp[-1].comps);
+                    vc->push_back(*((yyvsp[0].comp)));
+                    (yyval.comps) = vc;
+             }
+#line 1263 "CircuitParser.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 68 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                    (yyval.comp) = new SATCirc::Component(*((yyvsp[-2].id)), *((yyvsp[-3].vars)), *((yyvsp[-1].vars)));
+             }
+#line 1271 "CircuitParser.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 74 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                    SATCirc::Var v;
+                    if(env->in(*((yyvsp[0].id)))) v = env->get(*((yyvsp[0].id)));
+                    else { v = SATCirc::Var(true); env->insert(*((yyvsp[0].id)), v); }
+                    (yyval.vars) = new std::vector<SATCirc::Var>();
+                    (yyval.vars)->push_back(v);
+             }
+#line 1283 "CircuitParser.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 82 "CircuitParser.y" /* yacc.c:1646  */
+    {
+                    SATCirc::Var v;
+                    if(env->in(*((yyvsp[0].id)))) v = env->get(*((yyvsp[0].id)));
+                    else { v = SATCirc::Var(true); env->insert(*((yyvsp[0].id)),v); }
+                    std::vector<SATCirc::Var> *vs = (yyvsp[-1].vars);
+                    vs->push_back(v);
+                    (yyval.vars) = vs;
+             }
+#line 1296 "CircuitParser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1234 "CircuitParser.c" /* yacc.c:1646  */
+#line 1300 "CircuitParser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1280,7 +1346,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (scanner, circ, YY_("syntax error"));
+      yyerror (scanner, circ, env, YY_("syntax error"));
 #else
 # define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
                                         yyssp, yytoken)
@@ -1307,7 +1373,7 @@ yyerrlab:
                 yymsgp = yymsg;
               }
           }
-        yyerror (scanner, circ, yymsgp);
+        yyerror (scanner, circ, env, yymsgp);
         if (yysyntax_error_status == 2)
           goto yyexhaustedlab;
       }
@@ -1331,7 +1397,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval, scanner, circ);
+                      yytoken, &yylval, scanner, circ, env);
           yychar = YYEMPTY;
         }
     }
@@ -1387,7 +1453,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  yystos[yystate], yyvsp, scanner, circ);
+                  yystos[yystate], yyvsp, scanner, circ, env);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1424,7 +1490,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (scanner, circ, YY_("memory exhausted"));
+  yyerror (scanner, circ, env, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1436,7 +1502,7 @@ yyreturn:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval, scanner, circ);
+                  yytoken, &yylval, scanner, circ, env);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1445,7 +1511,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  yystos[*yyssp], yyvsp, scanner, circ);
+                  yystos[*yyssp], yyvsp, scanner, circ, env);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1458,9 +1524,10 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 48 "CircuitParser.y" /* yacc.c:1906  */
+#line 92 "CircuitParser.y" /* yacc.c:1906  */
 
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, char const *msg) {
+void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg) {
+    (void)scanner; (void)str; (void)env;
     fprintf(stderr, "Error: %s\n", msg);
 }

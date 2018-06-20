@@ -40,15 +40,18 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 11 "CircuitParser.y" /* yacc.c:1909  */
+#line 13 "CircuitParser.y" /* yacc.c:1909  */
 
+    #include <vector>
     #include <string>
     #include <iostream>
+
+    #include "Env.h"
     #include "Circuit.h"
     using namespace std;
  
 
-#line 52 "CircuitParser.h" /* yacc.c:1909  */
+#line 55 "CircuitParser.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -65,12 +68,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
+#line 32 "CircuitParser.y" /* yacc.c:1909  */
 
-  /* VAR  */
-  int VAR;
-  /* ID  */
-  std::string* ID;
-#line 74 "CircuitParser.h" /* yacc.c:1909  */
+    std::vector<SATCirc::Var> *vars;
+    SATCirc::Component *comp;
+    std::vector<SATCirc::Component> *comps;
+    std::string *id;
+
+#line 79 "CircuitParser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -80,6 +85,6 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int yyparse (void *scanner, SATCirc::Circuit **circ);
+int yyparse (void *scanner, SATCirc::Circuit **circ, SATCirc::EnvVar *env);
 
 #endif /* !YY_YY_CIRCUITPARSER_H_INCLUDED  */

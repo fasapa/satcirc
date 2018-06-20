@@ -1,0 +1,155 @@
+% Exemplo de relatório técnico e outros documentos do INF-UFG 
+% com texto em português formatado com LaTeX
+
+\documentclass[a4paper, 12pt]{article}
+
+% MODIFICAÇÕES CLASSE INF
+\usepackage[english,portuguese,brazil]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{hyperref}
+\usepackage{url} 
+\usepackage[vlined,titlenumbered,algo2e,ruled,portuguese]{algorithm2e} 
+\usepackage{indentfirst}
+\usepackage{txfonts}
+\usepackage{times}
+
+% MARGENS
+\setlength{\voffset}{-1in}
+\setlength{\hoffset}{-1in}
+
+\setlength{\oddsidemargin}{3.0cm}
+\setlength{\evensidemargin}{3.0cm}
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-\oddsidemargin}
+\addtolength{\textwidth}{-2.0cm}
+
+\setlength{\topmargin}{0.0cm}
+\setlength{\headheight}{1.5cm}
+\setlength{\headsep}{1.5cm}
+
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-\topmargin}
+\addtolength{\textheight}{-\headheight}
+\addtolength{\textheight}{-\headsep}
+\addtolength{\textheight}{-2.0cm}
+
+\setlength{\parindent}{1cm}
+% MARGENS
+
+% AMBIENTES
+\renewcommand{\theequation}{\thechapter-\arabic{equation}}
+\newtheorem{definition}{Defini\c{c}\~{a}o}[section]
+\newtheorem{theorem}[definition]{Teorema}
+\newtheorem{corollary}[definition]{Corol\'{a}rio}
+\newtheorem{lemma}[definition]{Lema}
+\newtheorem{proposition}[definition]{Proposi\c{c}\~{a}o}
+\newtheorem{comment}[definition]{Observac{c}\~{a}o}
+\newtheorem{conjecture}[definition]{Conjectura}
+\newenvironment{proof}{\par \noindent \textit{Prova}.}{\hfill $\Box$\newline}
+% % AMBIENTES
+
+\floatstyle{ruled}
+\newfloat{codigo}{tbp}{lop}
+\floatname{codigo}{Código}
+
+% \renewenvironment{abstract}{%
+% %\selectlanguage{english}
+%       \list{}{%\advance\topsep by0.35cm\relax%\small
+%       \leftmargin=0.8cm
+%       \labelwidth=\z@
+%       \listparindent=\z@
+%       \itemindent\listparindent
+%       \rightmargin\leftmargin}\item[\hskip\labelsep
+%                                     \bfseries\itshape Abstract.]\itshape}%
+%       {\endlist}
+
+% \newenvironment{keywords}{%
+%       \list{}{\advance\topsep by0.35cm\relax%\small
+%       \leftmargin=0.8cm
+%       \labelwidth=\z@
+%       \listparindent=\z@
+%       \itemindent\listparindent
+%       \rightmargin\leftmargin}\item[\hskip\labelsep
+%                                     \bfseries Keywords:]}%
+%       {\endlist}
+
+\makeatletter
+\newenvironment{resumo}{%
+  \list{}{%\advance\topsep by0.35cm\relax%\small
+    \leftmargin=0.8cm
+    \labelwidth=\z@
+    \listparindent=\z@
+    \itemindent\listparindent
+    \rightmargin\leftmargin}\item[\hskip\labelsep
+  \bfseries\itshape Resumo.]\itshape}%
+{\endlist}
+
+
+\newenvironment{palavras-chave}{%
+  \list{}{%\advance\topsep by0.35cm\relax%\small
+    \leftmargin=0.8cm
+    \labelwidth=\z@
+    \listparindent=\z@
+    \itemindent\listparindent
+    \rightmargin\leftmargin}\item[\hskip\labelsep
+  \bfseries Palavras-Chave:]}%
+{\endlist}
+\makeatother
+
+\begin{document}
+
+%%---------------------------------------------------------- TITULO E AUTOR DA PAG 1 %
+% TITULO e NOMES DOS AUTORES, completos, para a pagina 1.
+% Use "\\" para quebrar linhas, "\and" para separar autores.
+%
+\title{\bf Redação de Relatórios Técnicos \\e Outros Documentos do
+  \\ Instituto de Informática da UFG Usando \LaTeX}
+
+\author{Fabrício \thanks{fabricio@email.com} \and
+  Felipe \thanks{felipe@email.com} \and
+  Arthur \thanks{arthur@emaiil.com}}
+\date{}
+
+\maketitle
+%---------------------------------------------------------- TITULO E AUTOR DA PAG 1 %
+
+
+%---------------------------------------------------------- CABECALHO DAS PAGINAS %
+% Nomes de autores ABREVIADOS e título ABREVIADO, para cabecalhos em cada página.
+% \markboth{\small de Carvalho e Longo}{\small Relatórios Técnicos Usando \LaTeX}
+% \pagestyle{myheadings}
+%---------------------------------------------------------- CABECALHO DAS PAGINAS %
+
+
+%----------------------------------------------------------ABSTRACT %
+% \begin{abstract}
+% This meta-paper describes how to use the class that defines the model for Technical Reports and other documents, according to the patterns adopted by the Instituto de Informática of UFG. An abstract and "resumo" should be added. In both cases, abstract (and ``resumo'') should not have more than 10 lines and must be in the first page of the paper. 
+% \end{abstract}
+
+% \begin{keywords}
+% Technical Report, \LaTeX.
+% \end{keywords}
+%----------------------------------------------------------ABSTRACT %
+
+%----------------------------------------------------------RESUMO %
+\begin{resumo} 
+Este meta-artigo descreve como usar a classe que define o modelo para a confecção de Relatórios Técnicos e outros documentos, segundo o padrão adotado pelo Instituto de Informática da UFG. É solicitada a escrita de resumo e \textit{abstract}. O autor deve tomar cuidado para que o resumo e o \textit{abstract} não ultrapassem 10 linhas cada, sendo que ambos devem estar na primeira página do relatório.
+\end{resumo}
+
+\begin{palavras-chave}
+Relatório Técnico, \LaTeX.
+\end{palavras-chave}
+% ----------------------------------------------------------RESUMO
+
+\input{intro}
+\input{sat}
+\input{implementacao}
+\input{resultados}
+
+% \bibliography{exemplo}
+\end{document}

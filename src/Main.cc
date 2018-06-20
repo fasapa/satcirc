@@ -1,71 +1,81 @@
-#include <string>
-#include <cstdio>
+// C Headers
+#include <cstdlib>
+
+// C++ Headers
 #include <iostream>
-#include <climits>
+using std::cerr; using std::endl;
+#include <string>
+using std::string;
 
-#include "CircuitParser.h"
-#include "CircuitScanner.h"
+#include "Env.h"
+#include "Execucao.h"
 
+
+
+// #include <string>
+// #include <iostream>
+// #include <vector>
+// #include <cstdio>
+
+// #include "CircuitParser.h"
+// #include "CircuitScanner.h"
+
+// #include "util.h"
 // #include "Var.h"
+// #include "Env.h"
 // #include "Cnf.h"
-#include "Circuit.h"
+// #include "Circuit.h"
 
-using namespace std;
-using namespace SATCirc;
-
-// Transformar um Circuit em um CNF
-int main(int argc, char **argv) {
-  (void)argc;
-
-  FILE *f = fopen(argv[1], "r");
-  yyscan_t scanner;
-  yylex_init(&scanner);
-  yyset_in(f, scanner);
-
-  char felipe[] = "felipe";
-
-  Circuit *circ = nullptr;
-  yyparse(scanner, &circ);
-
-  cout << circ->name();
-  
-  yylex_destroy(scanner);
-  
-
-  // Var v1(1), v2(-2);
-  // Clause c1(v1, v2);
-  // Cnf t("TESTE", 2);
-  // t.addClause(c1); t.addClause(c1);
-  
-  // cout << t.print() << endl;
-
-  // Component AND("AND");
-  // AND.addInput(v1);
-  // AND.addInput(v2);
-  // AND.addOutput(v2);
-
-  // cout << AND.print() << endl;
-
-  // Circuit lol("LOL");
-  // lol.addComponent(AND);
-  // lol.addComponent(AND);
-
-  // cout << lol.print() << endl;
-    
-  return 0;
+namespace SATCirc {
+  typedef enum modo_operacao_ {
+    COMPILACAO, VERIFICACAO
+  } OP;
 }
 
+// Transformar um Circuit em um CNF
+int main(const int argc, const char *const argv[]) {
 
+  if(argc <= 2) {
+    cerr << "Uso errado. Correto: " << argv[0] << " modo input [output]" << endl;
+    exit(EXIT_FAILURE);
+  }
+  
+  // argv[0] = nome do programa
+  // argv[1] = modo de operação
+  // argv[2] = arquivo de input
+  // argv[3] = arquivo de output (se necessário)
+  // Modo de operação: (c) compilação, (v) verificação
+  string op, file_in, file_out;
+  op.append(argv[1]); file_in.append(argv[2]);
+  if(argc < 4) file_out += ""; else file_out += argv[3];
 
+  // Verificar falhas nas opções da linha de comando.
+  if(op != "c" && op != "v") {  // Modo desconhecido
+    cerr << "Modo de operação desconhecido: (c) compilação, (v) verificação" << endl;
+    exit(EXIT_FAILURE);
+  } else if(file_in.empty()) {  // Arquivo input não especificado.
+    cerr << "Arquivo de input não especificado." << endl;
+    exit(EXIT_FAILURE);
+  }
 
+  SATCirc::OP modo;
+  if(op == "c") modo = SATCirc::COMPILACAO;
+  else if(op == "v") modo = SATCirc::VERIFICACAO;
+  else exit(EXIT_FAILURE);      // Não deve ser possível alcançar este else
 
+  // Inicialização
+  // Ambientes de CNF e variáveis
+  SATCirc::EnvVar eVar;
+  SATCirc::EnvCnf eCnf; SATCirc::inicializacao(&eCnf);
 
-
-
-
-
-
-
+  // Execução
+  switch(modo) {
+  case SATCirc::COMPILACAO:
+    return SATCirc::compilar(&eVar, &eCnf, file_in, file_out); break;
+  case SATCirc::VERIFICACAO:
+    return SATCirc::verificar(); break;
+  } 
+}
 
 // #include "minisat/simp/SimpSolver.h"
 
