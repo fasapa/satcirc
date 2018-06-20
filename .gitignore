@@ -31,3 +31,12 @@
 *.exe
 *.out
 *.app
+
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.log
+*.pdf
+./auto/*
+*.el
