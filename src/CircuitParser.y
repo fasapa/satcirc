@@ -7,7 +7,7 @@
 #include "CircuitParser.h"
 #include "CircuitScanner.h"
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg);
+void circ_yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg);
 %}
 
 %code requires {
@@ -22,6 +22,8 @@ void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, cha
 
 %defines "CircuitParser.h"
 %output "CircuitParser.c"
+
+%name-prefix "circ_yy"
 
 %define parse.error verbose
 %define api.pure
@@ -90,7 +92,7 @@ variaveis:
 
 %%
 
-void yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg) {
+void circ_yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg) {
     (void)scanner; (void)str; (void)env;
     fprintf(stderr, "Error: %s\n", msg);
 }

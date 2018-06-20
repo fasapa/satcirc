@@ -58,11 +58,11 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
 
   // Scanner e Parser
   yyscan_t sc;
-  yylex_init(&sc); yyset_in(fi, sc);
+  circ_yylex_init(&sc); circ_yyset_in(fi, sc);
 
   Circuit *circ = nullptr;
-  yyparse(sc, &circ, eV);
-  yylex_destroy(sc);
+  circ_yyparse(sc, &circ, eV);
+  circ_yylex_destroy(sc);
 
   // Construir CNF final
   Cnf outCnf(circ->name(), circ->size());
