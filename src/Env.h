@@ -35,7 +35,7 @@ namespace SATCirc {
     EnvCnf() = default;
 
     void insert(std::string, Cnf c);
-    // bool in(std::string s);
+    bool in(std::string s);
     Cnf get(std::string s);
   };
 }

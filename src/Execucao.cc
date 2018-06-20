@@ -17,6 +17,8 @@
 // Parser & Lexer
 #include "CircuitParser.h"
 #include "CircuitScanner.h"
+#include "CnfParser.h"
+#include "CnfScanner.h"
 
 using std::string;
 using std::cerr; using std::cout; using std::endl;
@@ -46,6 +48,40 @@ void SATCirc::inicializacao(EnvCnf *ec) {
 
 }
 
+int readCircuit(const std::string fin, EnvVar *const e, Circuit **c) {
+
+  // Abrir arquivo
+  FILE *fi = fopen(fin.c_str(), "r");
+  if(fi == NULL) {
+    cerr << "Arquivo " << fin << " inexistente." << endl;
+    return EXIT_FAILURE;
+  }
+
+  yyscan_t s;
+  circ_yylex_init(&s); circ_yyset_in(fi, s);
+  circ_yyparse(s, c, e);
+  circ_yylex_destroy(s);
+
+  return EXIT_SUCCESS;
+}
+
+int readCnf(const std::string fin, Cnf **c) {
+
+  // Abrir arquivo
+  FILE *fi = fopen(fin.c_str(), "r");
+  if(fi == NULL) {
+    cerr << "Arquivo " << fin << " inexistente." << endl;
+    return EXIT_FAILURE;
+  }
+
+  yyscan_t s;
+  cnf_yylex_init(&s); cnf_yyset_in(fi, s);
+  cnf_yyparse(s, c);
+  cnf_yylex_destroy(s);
+
+  return EXIT_SUCCESS;
+}
+
 int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, const string fout) {
   (void)fout;
 
@@ -56,13 +92,9 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
     return EXIT_FAILURE;
   }
 
-  // Scanner e Parser
-  yyscan_t sc;
-  circ_yylex_init(&sc); circ_yyset_in(fi, sc);
-
+  // Ler circuito
   Circuit *circ = nullptr;
-  circ_yyparse(sc, &circ, eV);
-  circ_yylex_destroy(sc);
+  if(readCircuit(fin, eV, &circ)) return EXIT_FAILURE;
 
   // Construir CNF final
   Cnf outCnf(circ->name(), circ->size());
@@ -73,22 +105,32 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
   // Para cada componente realizar substituição variáveis
   for(size_t i = 0; i < comp.size(); i += 1) {
     Component c = comp[i];
-    Cnf cnf = eC->get(c.name()); // Buscar CNF da componente
-    // CASO EM QUE CNF NÃO ESTÁ DISPONÍVEL
+
+    // Verificar se a componente existe
+    Cnf *cnf = nullptr;
+    if(eC->in(c.name())) {
+      cnf = new Cnf();
+      *cnf = eC->get(c.name());
+    } else {
+      string cnf_file(c.name() + ".cnf");
+
+      if(readCnf(cnf_file, &cnf)) return EXIT_FAILURE;
+      eC->insert(cnf->name(), *cnf);
+    }
 
     // Input e output da componente
     vector<Var> in = c.inputs(), out = c.outputs();
     vector<Var> vars(in); vars.insert(vars.end(), out.begin(), out.end());
 
     // Bump valores das variáveis para incluir no CNF
-    if(cnf.bump(max_var(vars).num()-cnf.maxVal()+bump, cnf.maxVal()))
+    if(cnf->bump(max_var(vars).num()-cnf->maxVal()+bump, cnf->maxVal()))
       bump += 1;
 
     // Atualiza variáveis
-    cnf.change(vars);
+    cnf->change(vars);
 
     // Adiciona as clausulas ao cnf final
-    outCnf.addClause(cnf.clauses());
+    outCnf.addClause(cnf->clauses());
   }
 
   //Escreve CNF resultante.

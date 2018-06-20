@@ -24,5 +24,6 @@ string EnvVar::get(Var v) { return _vs[v]; }
 unsigned EnvVar::size() { return _sv.size(); }
 
 // Cnf environment
+bool EnvCnf::in(string s) { return (_sc.find(s) != _sc.end()); }
 void EnvCnf::insert(string s, Cnf c) { _sc.insert(make_pair(s, c)); }
 Cnf EnvCnf::get(string s) { return _sc[s]; }
