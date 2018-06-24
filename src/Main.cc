@@ -65,13 +65,15 @@ int main(const int argc, const char *const argv[]) {
   // Ambientes de CNF e variáveis
   SATCirc::EnvVar eVar;
   SATCirc::EnvCnf eCnf; SATCirc::inicializacao(&eCnf);
-
+  SATCirc::Circuit *circ = nullptr;
+  SATCirc::Cnf *cnf = nullptr;
+  
   // Execução
   switch(modo) {
   case SATCirc::COMPILACAO:
-    return SATCirc::compilar(&eVar, &eCnf, file_in, file_out); break;
+    return SATCirc::compilar(&eVar, &eCnf, &circ, &cnf, file_in, file_out); break;
   case SATCirc::VERIFICACAO:
-    return SATCirc::verificar(); break;
+    return SATCirc::verificar(file_in); break;
   } 
 }
 

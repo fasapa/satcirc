@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -6,10 +8,10 @@
 #include "Var.h"
 
 inline SATCirc::Var max_var(std::vector<SATCirc::Var> vv) {
-  SATCirc::Var max;
-  for(auto const v : vv) {
-    if(v.num() > max.num()) max = v;
-  }
+  SATCirc::Var max = vv[0];
+
+  for(size_t i = 1; i < vv.size(); i += 1)
+    if(vv[i].num() > max.num()) max = vv[i];
 
   return max;
 }

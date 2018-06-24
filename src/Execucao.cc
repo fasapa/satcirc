@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+
 // C Headers
 #include <cstdlib>
 #include <cstdio>
@@ -8,11 +10,12 @@
 #include <vector>
 #include <string>
 
+#include "util.h"
 #include "Execucao.h"
 #include "Var.h"
 #include "Env.h"
 #include "Circuit.h"
-#include "util.h"
+#include "Solver.h"
 
 // Parser & Lexer
 #include "CircuitParser.h"
@@ -82,22 +85,18 @@ int readCnf(const std::string fin, Cnf **c) {
   return EXIT_SUCCESS;
 }
 
-int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, const string fout) {
-  (void)fout;
-
-  // Abrir arquivo de input
-  FILE *fi = fopen(fin.c_str(), "r");
-  if(fi == NULL) {
-    cerr << "Arquivo " << fin << " inexistente." << endl;
-    return EXIT_FAILURE;
-  }
+int
+SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC,
+                  Circuit **c, Cnf **cnf,
+                  const string fin, const string fout) {
 
   // Ler circuito
-  Circuit *circ = nullptr;
-  if(readCircuit(fin, eV, &circ)) return EXIT_FAILURE;
+  if(readCircuit(fin, eV, c)) return EXIT_FAILURE;
+  Circuit *circ = *c;
 
   // Construir CNF final
-  Cnf outCnf(circ->name(), circ->size());
+  *cnf = new Cnf(circ->name(), circ->size());
+  Cnf *outCnf = *cnf;
 
   vector<Component> comp = circ->components();
   unsigned bump = 0;
@@ -130,7 +129,7 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
     cnf->change(vars);
 
     // Adiciona as clausulas ao cnf final
-    outCnf.addClause(cnf->clauses());
+    outCnf->addClause(cnf->clauses());
   }
 
   //Escreve CNF resultante.
@@ -138,8 +137,25 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
   if(fout == "stdout" || fout == "") fo = stdout;
   else fo = fopen(fout.c_str(), "w");
 
-  fprintf(fo, "%s", outCnf.print().c_str());
+  fprintf(fo, "%s", outCnf->print().c_str());
   return EXIT_SUCCESS;
 }
 
-int SATCirc::verificar() { return EXIT_SUCCESS; }
+int SATCirc::verificar(const string file_in) {
+
+  Circuit *circ = nullptr;
+  EnvVar eV;
+
+  // Ler circuito
+  if(readCircuit(file_in, &eV, &circ)) return EXIT_FAILURE;
+
+  // Ler cnf
+  Cnf *cnf = nullptr;
+  if(readCnf((circ->name() + ".cnf"), &cnf)) return EXIT_FAILURE;
+
+  // Executar busca de solução
+  Solver s(*cnf);
+  s.solve(eV, "haha.txt");
+
+  return EXIT_SUCCESS;
+}
