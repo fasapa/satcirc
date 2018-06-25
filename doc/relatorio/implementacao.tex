@@ -1,7 +1,6 @@
 \section{Implementação}
 \label{sec:implementacao}
 
-
 \subsection{Compilador}
 \label{sec:Compilador}
 O sistema de leitura do circuito e da Forma Normal Conjuntiva (CNF) foram implementados utilizando as ferramentas flex\footnote{https://github.com/westes/flex} e bison\footnote{https://www.gnu.org/software/bison/}.% , os frameworks são utilizados em conjunto com muita frequência, então existem funções internas neles que facilitam a interação entre os dois.
@@ -28,3 +27,46 @@ No caso do CNF o analisador léxico separa basicamento o nome que representa o c
   clausula  ::= '(' variaveis ')'
   variaveis ::= NUM | variaveis NUM
 \end{lstlisting}
+
+\subsection{Transformação de Tseytin}\label{sec:tseytin}
+Todo circuito digital combinatório pode ser escrito como uma formula da lógica proposicional, utilizando
+os conectivos usuais. Entretanto SAT espera uma CNF como entrada, ou seja, contendo apenas
+os operadores binários $\land$ e $\lor$. A transformação é realizada utilizando equivalências
+lógicas, como as leis de De Morgan, até que se obtenha o formato esperado. Um ponto negativo deste
+método é a explosão de termos causado pela distributividade da disjunção na conjunção:
+$P \lor (Q \land R) \equiv (P \lor Q) \land (P \lor R)$, gerando um aumento exponêncial no tamanho
+do termo.
+
+Para contornar este problema utilizamos uma transformação proposta por Tseytin
+\footnote{G.S. Tseytin: On the complexity of derivation in propositional calculus. In: Slisenko, A.O. (ed.) Studies in Constructive Mathematics and Mathematical Logic, Part II, Seminars in Mathematics, pp. 115–125. Steklov Mathematical Institute (1970).}. Neste método o tamanho da formula final é linear
+com o tamanho do circuito. A transformação não gera formulas equivalentes, pois há introdução
+de variáveis novas, mas mantem a satisfatibilidade, ou seja, a formula final é satistatível se, e
+somente se, a formula inicial for satisfatível. A transformação consiste em três partes
+(exemplo abaixo): idêntificação de todas subformulas, introduzir uma nova variável para cada
+subformula e conjunção de todas subformulas. Formula original,
+\begin{equation*}
+  \phi := ((p \lor q) \land r) \leftarrow (\neg s)
+\end{equation*}
+idêntificação das subformulas,
+\begin{eqnarray*}
+  &\neg s \\
+  &p \lor q \\
+  &(p \lor q) \land r \\
+  &((p \lor q) \land r) \leftarrow (\neg s)
+\end{eqnarray*}
+introdução de variáveis novas,
+\begin{eqnarray*}
+  x_1 \leftrightarrow& \neg s \\
+  x_2 \leftrightarrow& p \lor q \\
+  x_3 \leftrightarrow& (p \lor q) \land r \\
+  x_4 \leftrightarrow& ((p \lor q) \land r) \leftarrow (\neg s)  
+\end{eqnarray*}
+conjunção de todas as formulas e substituição em $\phi$,
+\begin{eqnarray*}
+  T(\phi) := x_4 \land
+  (x_4 \leftrightarrow x_3 \leftarrow x_1) \land
+  (x_3 \leftrightarrow x_2 \land r ) \land
+  (x_2 \leftrightarrow p \lor q) \land
+  (x_1 \leftrightarrow \neg s)
+\end{eqnarray*}
+deste ponto em diante utiliza-se as transformações usuais da lógica proposicional.
