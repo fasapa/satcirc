@@ -15,8 +15,16 @@
 \usepackage{url} 
 \usepackage[vlined,titlenumbered,algo2e,ruled,portuguese]{algorithm2e} 
 \usepackage{indentfirst}
-\usepackage{txfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  mathescape
+}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
 \usepackage{times}
+
 
 % MARGENS
 \setlength{\voffset}{-1in}
@@ -147,8 +155,11 @@ Relatório Técnico, \LaTeX.
 % ----------------------------------------------------------RESUMO
 
 \input{intro}
+
 \input{sat}
+
 \input{implementacao}
+
 \input{resultados}
 
 % \bibliography{exemplo}
