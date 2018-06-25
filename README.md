@@ -16,3 +16,10 @@ export MROOT=$(pwd)
 make libr -C minisat/simp/
 ln -s minisat/simp/lib_release.a minisat.a
 ```
+
+Compile SATCirc
+```shell
+bison *.y
+flex -Cf *.l
+g++ -Iminisat -std=c++11 -Wall -Wextra -pedantic -O3 *.c *.cc minisat.a -lz -o sat
+```

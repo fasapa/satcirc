@@ -19,7 +19,7 @@ Clause::Clause(Var v, Var b) { _vars.push_back(v); _vars.push_back(b); }
 Clause::Clause(Var v, Var b, Var n) { _vars.push_back(v); _vars.push_back(b); _vars.push_back(n); }
 
 // Methods
-vector<Var> Clause::vars()  const { return _vars; }
+vector<Var> Clause::vars() const { return _vars; }
 
 void Clause::addVar(Var v) { _vars.push_back(v); }
 void Clause::addVar(Var v, Var b) { _vars.push_back(v); _vars.push_back(b); }
@@ -73,7 +73,16 @@ vector<Clause> Cnf::clauses() const { return _clauses; }
 
 vector<Var> Cnf::variables() const {
   vector<Var> vars;
-  for(auto c : _clauses) vars.insert(vars.end(), c.vars().begin(), c.vars().end());
+
+  // Itera em todas as clausulas coletando as variáveis (pode conter repetição)
+  for(size_t i = 0; i < _clauses.size(); i += 1) {
+    vector<Var> cv = _clauses[i].vars();
+
+    for(size_t j = 0; j < cv.size(); j += 1) {
+      vars.push_back(cv[j]);
+    }
+  }
+
   return vars;
 }
 

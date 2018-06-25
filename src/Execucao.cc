@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+
 // C Headers
 #include <cstdlib>
 #include <cstdio>
@@ -8,11 +10,12 @@
 #include <vector>
 #include <string>
 
+#include "util.h"
 #include "Execucao.h"
 #include "Var.h"
 #include "Env.h"
 #include "Circuit.h"
-#include "util.h"
+#include "Solver.h"
 
 // Parser & Lexer
 #include "CircuitParser.h"
@@ -82,19 +85,15 @@ int readCnf(const std::string fin, Cnf **c) {
   return EXIT_SUCCESS;
 }
 
-int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, const string fout) {
-  (void)fout;
+int
+SATCirc::compilar(const string fin) {
 
-  // Abrir arquivo de input
-  FILE *fi = fopen(fin.c_str(), "r");
-  if(fi == NULL) {
-    cerr << "Arquivo " << fin << " inexistente." << endl;
-    return EXIT_FAILURE;
-  }
+  // Inicialização
+  EnvVar eV; EnvCnf eC; inicializacao(&eC);
 
   // Ler circuito
   Circuit *circ = nullptr;
-  if(readCircuit(fin, eV, &circ)) return EXIT_FAILURE;
+  if(readCircuit(fin, &eV, &circ)) return EXIT_FAILURE;
 
   // Construir CNF final
   Cnf outCnf(circ->name(), circ->size());
@@ -108,14 +107,13 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
 
     // Verificar se a componente existe
     Cnf *cnf = nullptr;
-    if(eC->in(c.name())) {
+    if(eC.in(c.name())) {
       cnf = new Cnf();
-      *cnf = eC->get(c.name());
+      *cnf = eC.get(c.name());
     } else {
       string cnf_file(c.name() + ".cnf");
-
       if(readCnf(cnf_file, &cnf)) return EXIT_FAILURE;
-      eC->insert(cnf->name(), *cnf);
+      eC.insert(cnf->name(), *cnf);
     }
 
     // Input e output da componente
@@ -133,13 +131,24 @@ int SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC, const string fin, cons
     outCnf.addClause(cnf->clauses());
   }
 
-  //Escreve CNF resultante.
-  FILE *fo = NULL;
-  if(fout == "stdout" || fout == "") fo = stdout;
-  else fo = fopen(fout.c_str(), "w");
-
-  fprintf(fo, "%s", outCnf.print().c_str());
+  fprintf(stdout, "%s", outCnf.print().c_str());
   return EXIT_SUCCESS;
 }
 
-int SATCirc::verificar() { return EXIT_SUCCESS; }
+int SATCirc::verificar(const string file_in, const string file_ver) {
+
+  Circuit *circ = nullptr;
+  EnvVar eV;
+
+  // Ler circuito
+  if(readCircuit(file_in, &eV, &circ)) return EXIT_FAILURE;
+
+  // Ler cnf
+  Cnf *cnf = nullptr;
+  if(readCnf((circ->name() + ".cnf"), &cnf)) return EXIT_FAILURE;
+
+  // Executar busca de solução
+  Solver s(*cnf); s.solve(eV, file_ver);
+
+  return EXIT_SUCCESS;
+}

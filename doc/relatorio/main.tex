@@ -15,8 +15,16 @@
 \usepackage{url} 
 \usepackage[vlined,titlenumbered,algo2e,ruled,portuguese]{algorithm2e} 
 \usepackage{indentfirst}
-\usepackage{txfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  mathescape
+}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
 \usepackage{times}
+
 
 % MARGENS
 \setlength{\voffset}{-1in}
@@ -107,12 +115,12 @@
 % TITULO e NOMES DOS AUTORES, completos, para a pagina 1.
 % Use "\\" para quebrar linhas, "\and" para separar autores.
 %
-\title{\bf Redação de Relatórios Técnicos \\e Outros Documentos do
-  \\ Instituto de Informática da UFG Usando \LaTeX}
+\title{\bf Verificação de Propriedades de Circuitos Digitais Combinatórios
+  Utilizando Técnica SAT}
 
-\author{Fabrício \thanks{fabricio@email.com} \and
-  Felipe \thanks{lipegemmal@hotmail.com} \and
-  Arthur \thanks{arthur@emaiil.com}}
+\author{Fabrício S. Paranhos\and
+  Felipe Gemmal\and
+  Arthur C. Costa}
 \date{}
 
 \maketitle
@@ -147,8 +155,11 @@ Relatório Técnico, \LaTeX.
 % ----------------------------------------------------------RESUMO
 
 \input{intro}
+
 \input{sat}
+
 \input{implementacao}
+
 \input{resultados}
 
 % \bibliography{exemplo}
