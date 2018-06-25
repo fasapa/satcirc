@@ -15,8 +15,16 @@
 \usepackage{url} 
 \usepackage[vlined,titlenumbered,algo2e,ruled,portuguese]{algorithm2e} 
 \usepackage{indentfirst}
-\usepackage{txfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  mathescape
+}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
 \usepackage{times}
+
 
 % MARGENS
 \setlength{\voffset}{-1in}
@@ -150,61 +158,9 @@ Relatório Técnico, \LaTeX.
 
 \input{sat}
 
-Minisat é um minimalistico, open-source resolvedor de problemas de satisfatibilidade booleana (SAT), desenvolvido para 
-ajudar pesquisadores e desenvolvedores a começarem desenvolvimento em SAT's. Seu funcionamento é basiado em backtracking
-por conflito de analises e aprendisado.
-
-Os componentes do resolvedor do MiniSat podem ser divididos conceptualmente em três categorias. A primeira é a representação.
-De alguma forma a instância do SATdeve ser representada por estruturas de dados. A segunda é a inferência. O resolvedor necessita
-de mecanismos para computar e propagar as implicações do estado atual de informações. A terceira é pesquisa. Geralmente combinado
-com inferência, pesquisa é necessária para encontrar informação.
-
-Para realizar pesquisas, assunções são feitas, atribuindo valores a variáveis selecionadas até que a propagação detecte um conflito.
-Nesse ponto uma cláusula conflito é construída e adicionada ao problema SAT.
-
-O MiniSat utiliza como base oalgoritmo Davis-Putman-Longemann-Loveland (DPLL) é um algoritimo de pesquisa baseado em 
-retrocesso (backtracking) que serve paradecidir a satisfatibilidade de formulas da logica proposicional em formula normal
-conjutiva, ou seja, para resolver problemas SAT.
-
-O algoritimo de backtracking escolhe um literal $\phi$ e lhe da o valor de TRUE, simplificando a formula e depois
-recursivamente checando se a formula simplificada é satisfatível. Caso seja, a formula original também é
-satisfatível, caso contrario, a mesma checagem recursiva é feita mas dando o valor FALSE dado ao literal $\phi$.
-Assim dividindo o problema em dois, simplificados, sub-problemas.
-
-Se uma clausula contem apenas um literal, então essa clausula so podeser satisfeita se for associado o valor
-TRUE ao literal. Quando uma variável proposicional ocorre com apenas uma polaridade, ela é chamada de pura. Variáveis puras
-podem ser associadas de uma jeito onde toda clausula que as contem resultam em TRUE, logo tais clausulas podem
-ser deletadas da busca.
-
-\begin{verbatim}
-função DPLL($\Phi$, u)
-   se todas as cláusulas de Y forem verdadeiras 
-       então retorne TRUE;
-       
-   se alguma cláusula de Y for falsa
-       então retorne FALSE;
-       
-   se ocorrer uma cláusula unitária c em Y
-       então retorne DPLL(atribuição(c,Y), (u and c));
-       
-   se ocorrer um literal puro c em Y
-       então retorne DPLL(atribuição(c,Y), (u and c));
-       
-   c := escolha_literal(Y);
-   
-   retorne DPLL(atribuição(c,Y), (u and c)) ou DPLL(atribuição(-c,Y), (u and -c));
-\end{verbatim}
-
- No pseudocódigo acima, atribuição(c, Φ) é uma função que retorna uma fórmula obtida pela substituição de cada ocorrência
- de c por TRUE, e cada ocorrência do literal oposto por falso na fórmula Y, e em seguida, simplificando a fórmula resultante.
- A função DPLL do pseudocódigo retorna verdadeiro se a atribuição final satisfaz a fórmula ou falso se tal atribuição não satisfaz 
- a fórmula. Em uma implementação real, a atribuição satisfatível também é retornada no caso de sucesso (esta foi omitida para maior clareza).
-
 \input{implementacao}
 
 \input{resultados}
-
-
 
 % \bibliography{exemplo}
 \end{document}
