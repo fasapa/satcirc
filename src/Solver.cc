@@ -10,9 +10,6 @@
 #include "Solver.h"
 #include "readverify.h"
 
-// MiniSat
-#include "minisat/simp/SimpSolver.h"
-
 using std::vector; using namespace std;
 using namespace SATCirc;
 

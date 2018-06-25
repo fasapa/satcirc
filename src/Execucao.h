@@ -11,9 +11,8 @@
 
 namespace SATCirc {
   void inicializacao(EnvCnf *ec);
-  int compilar(EnvVar *const eV, EnvCnf *const eC,
-               Circuit **circ, Cnf **cnf, const std::string in, const std::string out);
-  int verificar(const std::string in);
+  int compilar(const std::string in);
+  int verificar(const std::string in, const std::string ver);
 }
 
 #endif

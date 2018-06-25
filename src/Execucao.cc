@@ -86,17 +86,17 @@ int readCnf(const std::string fin, Cnf **c) {
 }
 
 int
-SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC,
-                  Circuit **c, Cnf **cnf,
-                  const string fin, const string fout) {
+SATCirc::compilar(const string fin) {
+
+  // Inicialização
+  EnvVar eV; EnvCnf eC; inicializacao(&eC);
 
   // Ler circuito
-  if(readCircuit(fin, eV, c)) return EXIT_FAILURE;
-  Circuit *circ = *c;
+  Circuit *circ = nullptr;
+  if(readCircuit(fin, &eV, &circ)) return EXIT_FAILURE;
 
   // Construir CNF final
-  *cnf = new Cnf(circ->name(), circ->size());
-  Cnf *outCnf = *cnf;
+  Cnf outCnf(circ->name(), circ->size());
 
   vector<Component> comp = circ->components();
   unsigned bump = 0;
@@ -107,14 +107,13 @@ SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC,
 
     // Verificar se a componente existe
     Cnf *cnf = nullptr;
-    if(eC->in(c.name())) {
+    if(eC.in(c.name())) {
       cnf = new Cnf();
-      *cnf = eC->get(c.name());
+      *cnf = eC.get(c.name());
     } else {
       string cnf_file(c.name() + ".cnf");
-
       if(readCnf(cnf_file, &cnf)) return EXIT_FAILURE;
-      eC->insert(cnf->name(), *cnf);
+      eC.insert(cnf->name(), *cnf);
     }
 
     // Input e output da componente
@@ -129,19 +128,14 @@ SATCirc::compilar(EnvVar *const eV, EnvCnf *const eC,
     cnf->change(vars);
 
     // Adiciona as clausulas ao cnf final
-    outCnf->addClause(cnf->clauses());
+    outCnf.addClause(cnf->clauses());
   }
 
-  //Escreve CNF resultante.
-  FILE *fo = NULL;
-  if(fout == "stdout" || fout == "") fo = stdout;
-  else fo = fopen(fout.c_str(), "w");
-
-  fprintf(fo, "%s", outCnf->print().c_str());
+  fprintf(stdout, "%s", outCnf.print().c_str());
   return EXIT_SUCCESS;
 }
 
-int SATCirc::verificar(const string file_in) {
+int SATCirc::verificar(const string file_in, const string file_ver) {
 
   Circuit *circ = nullptr;
   EnvVar eV;
@@ -154,8 +148,7 @@ int SATCirc::verificar(const string file_in) {
   if(readCnf((circ->name() + ".cnf"), &cnf)) return EXIT_FAILURE;
 
   // Executar busca de solução
-  Solver s(*cnf);
-  s.solve(eV, "haha.txt");
+  Solver s(*cnf); s.solve(eV, file_ver);
 
   return EXIT_SUCCESS;
 }
