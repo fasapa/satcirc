@@ -1,7 +1,26 @@
 \section{SAT}
 \label{sec:sat}
 
-\subsection{Problema de satisfatibilidade booliana}\label{sec:ssat}
+\subsection{Problema de satisfatibilidade booleana}\label{sec:ssat}
+O problema da satisfatibilidade booleana (SAT) é o problema de se determinar, se existe, alguma
+interpretação que torna uma dada formula booleana verdadeira, ou seja a satisfaça. Por exemplo
+dada a seguinte formula booleana $F = (A \land \neg B)$ é satisfazível pois, se $A = \top$ e $B = \bot$
+temos $F = \top$.
+
+O que torna o problema SAT interessante é o fato de estar incluso na categoria de
+problemas NP-completo (foi o primeiro problema provado ser NP-completo). Isto significa que
+SAT é um representante de toda classe NP de problemas, sendo mais ou igualmente dificil de
+resolver quanto qualquer outro problema NP. Mesmo sendo um problema difícil de resolver (exponêncial),
+existem soluções baseadas em heuristicas e buscas que visam diminuir a complexidade, ou
+diminuir o caso médio, permitindo resolver grandes instâncias em pouco tempo.
+
+Por definição de NP-completo, qualquer problema na classe NP pode ser reduzido a um problema
+NP-completo em tempo polinomial\footnote{J. van Leeuwen (1998). Handbook of Theoretical Computer Science. Elsevier. p. 84. ISBN 0-262-72014-0.}. Podemos nos aproveitar deste fato para resolver problemas
+difíceis e sem solução, reduzindo-o a uma instância SAT e utilizando algorítimos otimizados específicos
+para SAT. Entre tais algorítimos podemos citar: Davis-Putnam-Logemann-Loveland (DPLL)
+\footnote{Davis, M.; Putnam, H. (1960). "A Computing Procedure for Quantification Theory". Journal of the ACM. 7 (3): 201. doi:10.1145/321033.321034}\footnote{Davis, M.; Logemann, G.; Loveland, D. (1962). "A machine program for theorem-proving". Communications of the ACM. 5 (7): 394–397. doi:10.1145/368273.368557}, que forma a base de outros algorítimos, e Conflict-Driven Clause Learning (CDCL)
+\footnote{J.P. Marques-Silva; Karem A. Sakallah (May 1999). "GRASP: A Search Algorithm for Propositional Satisfiability". IEEE Transactions on Computers. 48 (5): 506–521. doi:10.1109/12.769433}, que inclui
+apredizagem de clausulas e \textit{backtracking} não cronológico em cima do DPLL.
 
 \subsection{MiniSat}
 \label{sec:minisat}
