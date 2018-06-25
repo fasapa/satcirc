@@ -4,14 +4,27 @@
 
 \subsection{Compilador}
 \label{sec:Compilador}
+O sistema de leitura do circuito e da Forma Normal Conjuntiva (CNF) foram implementados utilizando as ferramentas flex\footnote{https://github.com/westes/flex} e bison\footnote{https://www.gnu.org/software/bison/}.% , os frameworks são utilizados em conjunto com muita frequência, então existem funções internas neles que facilitam a interação entre os dois.
 
+O flex é um analisador lexico% da GNU (fab: NÃO É)
+que analisa o texto e o separa em tokens baseados em expressões regulares (formados que descrevem um conjunto de letras e números em quantidade e ordem específicada). O bison é um parser generator, ou analisador sintático, que recebe esses tokens do analisador lexico, e verifica se estão em concordância com a gramática
+especificada.
+% determina o significado dos conjuntos de tokens e os converte para um formato utilizavel pelo sistema SAT.
 
-			O sistema do Circuito e da Forma Normal Conjuntiva foram interpretados por meio de compiladores de texto implementados especificamente para o SAT, para o desenvolvimento desses interpretadores foram usadas as ferramentas Flex e Bison, os frameworks são utilizados em conjunto com muita frequência, então existem funções internas neles que facilitam a interação entre os dois.
-			
-		O Flex é analisador lexico da GNU que analisa o texto e o separa em tokens baseados em expressões regulares (formados que descrevem um conjunto de letras e números em quantidade e ordem específicada ).
-		
-			O Bison é um parser ou analisador sintático que recebe esses tokens do analisador lexico, determina o significado dos conjuntos de tokens e os converte para um formato utilizavel pelo sistema SAT.
-	
-			Para o Circuito ser analisado ele foi separado em tokens de variaveis representando os fios de entrada e saida e identificadores representando o nome dos circuitos envolvidos , já que um circuito maior pode ser representado por um conjunto de circuitos menores.
+Para o circuito ser analisado ele foi separado em tokens de variaveis representando os fios de entrada e saida e identificadores representando o nome dos circuitos envolvidos, já que um circuito maior pode ser representado por um conjunto de circuitos menores. Abaixo está a gramática utilizada no formato
+Backus-Naur.
+\begin{lstlisting}
+  circuito    ::=
+     ID '[' variaveis ';' variaveis ']' '{' componentes '}'
+  componentes ::= componente | componentes componente
+  componente  ::= variaveis ID variaveis ';'
+  variaveis   ::= VAR | variaveis VAR
+\end{lstlisting}
 
-			No caso da Forma Normal Conjuntiva (Cnf) o analisador léxico separa basicamento o nome que representa o circuito representado e os números do conjunto , e o papel do analisador sintático é de separar os números em suas respectivas cláusulas e converte-las para o formato implementado no sistema SAT.
+No caso do CNF o analisador léxico separa basicamento o nome que representa o circuito representado e os números do conjunto, e o papel do analisador sintático é de separar os números em suas respectivas cláusulas e converte-las para o formato implementado no sistema SAT. Abaixo está a gramática utilizada.
+\begin{lstlisting}
+  cnf       ::= ID NUM clausulas
+  clausulas ::= clausula | clausulas clausula
+  clausula  ::= '(' variaveis ')'
+  variaveis ::= NUM | variaveis NUM
+\end{lstlisting}
