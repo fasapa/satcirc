@@ -3,11 +3,11 @@
 
 Na atualidade os sistemas digitais estão crescendo exponencialmente em complexidade para reduzir o tamanho dos componentes. Um problema que isso gera é a garantia do funcionamento de todas as partes e do conjunto delas. Nesse contexto podem-se usar algoritmos de inteligência artificial para deixar essa resolução mais eficiênte.
 
-Porêm apenas a aplicação direta de IA não é suficiente, precisa-se modelar o problema e processar as informações da tal forma que o algoritmo possa chegar a uma conclusão de forma eficiênte. Para tal foi escolhido o modelo SAT e uma forma baseada na descrição de circuitos lógicos para auxiliar. 
+Porêm apenas a aplicação direta de IA não é suficiente, precisa-se modelar o problema e processar as informações da tal forma que o algoritmo possa chegar a uma conclusão de forma eficiênte. Para tal uma alternativa bastante utilizada é o formato de satisfabilidade booleana (SAT) que interage bem com uma busca informada. 
 
-O SAT (problema de satisfatibilidade booleana) é um problema clássico de decisão da lógica proposicional, NP completo, que diz respeito ao teste de uma expressão booleana que só aceita AND (e lógico), OR (ou lógico) e NOT (negação), variáveis e parênteses modelados no formado de conjunção de disjunções. O objetivo deste problema é testar se existe algum estado das variáveis em que a saída da expressão é positiva (satistativel).
+O SAT (problema de satisfatibilidade booleana) é um problema clássico de decisão da lógica proposicional, NP completo, que diz respeito ao teste de uma expressão booleana que só aceita AND (e lógico), OR (ou lógico) e NOT (negação), variáveis e parênteses modelados no formado de conjunção de disjunções. Consiste em determinar se existe algum estado das variáveis em que a saída da expressão é positiva (satistativel).
 
-O formato de descrição de circuito usado foi modificado da entrada padrão de forma que é recebido um circuito na forma
+Além do modelo de satisfabilidade também é necessário um formato de interpretação do circuito envolvido no problema, por isso foi elaborado um modelo básico de hardware baseado em \textit{Hardware Description Language} (HDL). O formato de descrição de circuito usado recebe um circuito na forma:
 \begin{lstlisting}
  Nome_Circuito [ fios_do circuito] {componentes_do_circuito}
 \end{lstlisting}
