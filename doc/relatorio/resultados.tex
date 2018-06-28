@@ -1,3 +1,93 @@
 \section{Resultados}
 \label{sec:resultados}
 
+No programa já estão incluidas as portas básicas AND, OR e NOT. Circuitos mais
+complexos devem ser construidos a partir de tais portas, montando uma
+biblioteca de circuitos disponíveis para uso posterior.
+
+\subsection{Compilação}
+\label{sec:compilacao}
+
+O processo de compilação é relativamente simples. O programa aplica as
+transformações de Tseytin para portas já definidas, emitindo, no final
+a CNF do circuito descrito na entrada. Para ilustrar os resultados
+iremos utilizar a porta NAND como exemplo.
+\begin{lstlisting}
+  cat nand.txt
+  NAND [a b; c] {
+    a b AND d;
+    d NOT c;
+  }
+\end{lstlisting}
+A estrutura do input é formada pelo nome do circuito (deve começar com uma
+letra maiúscula), seguido da descrição das entradas e saidas (aqui a b são
+portas de entrada enquanto c saida) e sucessivamente uma lista de componentes
+do circuito (portas AND e NOT).
+
+Para a obtenção da CNF executa-se o comando de compilação e o resultado é
+emitido para saida padrão do sistema.
+\begin{lstlisting}
+  satcirc c nand.txt
+  NAND 3 (-1 -2 4)(1 -4)(2 -4)(-4 -3)(4 3)
+\end{lstlisting}
+Como visto na descrição do NAND acima o usuário pode introduzir variáveis
+para descrever saidas de subcircuitos para posterior utilização interna.
+
+\subsection{Especificação}
+\label{sec:espec}
+
+A verificação de propriedades é feita utilizando um arquivo auxiliar. Como
+exemplo, queremos verificar se nossa especficação de porta NAND está correta.
+Vamos analisar em quais condições a saida é verdade(1):
+\begin{lstlisting}
+  cat nand_ver.txt
+  c
+  satcirc v nand.txt nand_ver.txt
+  SAT a(0) b(0) c(1)
+\end{lstlisting}
+Para saida c(1) temos que é satisfatível (SAT) para as entradas a(0) e b(0),
+como de acordo com a especificação da porta NAND. Entretanto está não é a
+única possibilidade de c(1), para encontrar as outras possibilidades devemos
+introduzir o resultado negado no arquivo de verificação:
+\begin{lstlisting}
+  cat nand_ver.txt
+  c
+  a b -c
+  satcirc v nand.txt nand_ver.txt
+  SAT a(0) b(1) c(1)
+\end{lstlisting}
+Para cada resultado, uma nova linha negada é introduziada no arquivo de
+verificação:
+\begin{lstlisting}
+  cat nand_ver.txt
+  c
+  a b -c
+  a -b -c
+  satcirc v nand.txt nand_ver.txt
+  SAT a(1) b(0) c(1)
+\end{lstlisting}
+e finalmente:
+\begin{lstlisting}
+  cat nand_ver.txt
+  c
+  a b -c
+  a -b -c
+  -a b -c
+  satcirc v nand.txt nand_ver.txt
+  UNSAT
+\end{lstlisting}
+Temos que este problema não é satisfatível (UNSAT), ou seja, não existem mais
+possibilidades da saida c(1) de acordo com as especificações de
+verificação. Abaixo temos o análogo para saida c(0).
+\begin{lstlisting}
+  cat nand_ver.txt
+  -c
+  satcirc v nand.txt nand_ver.txt
+  SAT a(1) b(1) c(0)
+  
+  cat nand_ver.txt
+  -c
+  -a -b c
+  satcirc v nand.txt nand_ver.txt
+  UNSAT
+\end{lstlisting}
