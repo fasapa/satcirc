@@ -1,3 +1,4 @@
+/*Bibliotecas básicas*/
 %{
 #include <string>
 #include <vector>
@@ -9,6 +10,8 @@
 
 void circ_yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env, char const *msg);
 %}
+
+/*Código que será colado diretamente no código fonte gerado*/
 
 %code requires {
     #include <vector>
@@ -30,6 +33,8 @@ void circ_yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env
 %lex-param {void *scanner}
 %parse-param {void *scanner} {SATCirc::Circuit **circ} {SATCirc::EnvVar *env}
 
+
+/*Gerando os tipos de variaveis usadas no compilador, é baseada em uma union do C*/
 %union {
     std::vector<SATCirc::Var> *vars;
     SATCirc::Component *comp;
@@ -37,12 +42,15 @@ void circ_yyerror(yyscan_t scanner, SATCirc::Circuit **str, SATCirc::EnvVar *env
     std::string *id;
 }
 
+/*Tokens recebidos do Scanner*/
 %token <id> ID
 %token <id> VAR
+/*Tipos intermediarios usados no BNF*/
 %type <vars> variaveis
 %type <comp> component
 %type <comps> components
 
+/*BNF do circuito , ele vai determinar a ordem e o que será feito quando aquele formato for encontrado*/
 %%
 
 circuito:
