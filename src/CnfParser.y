@@ -1,3 +1,4 @@
+/*Bibliotecas básicas utilizadas*/
 %{
 #include <string>
 #include <vector>
@@ -10,6 +11,7 @@
 void cnf_yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
 %}
 
+/*Código incluído diretamente no resultado final*/
 %code requires {
     #include <string>
     #include <iostream>
@@ -29,6 +31,7 @@ void cnf_yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
 %lex-param {void *scanner}
 %parse-param {void *scanner} {SATCirc::Cnf **cnf}
 
+/*Definição dos tipos usados, semelhante à union de C*/
 %union {
     int integer;
     std::string *id;
@@ -37,12 +40,16 @@ void cnf_yyerror(yyscan_t scanner, SATCirc::Cnf **cnf, char const *msg);
     std::vector<SATCirc::Clause> *cls;
 }
 
+/*Tokens recebidos do Scanner*/
 %token <id> ID
 %token <integer> NUM
+
+/*Tipos intermediarios utilizados no BNF*/
 %type <vars> variaveis;
 %type <cl> clausula;
 %type <cls> clausulas;
 
+/*BNF do CNF , ele vai determinar a ordem e o que será feito quando aquele formato for encontrado*/
 %%
 
 cnf:
