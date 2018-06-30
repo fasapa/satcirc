@@ -91,3 +91,17 @@ verificação. Abaixo temos o análogo para saida c(0).
   satcirc v nand.txt nand_ver.txt
   UNSAT
 \end{lstlisting}
+
+\section{Considerações finais}
+Em casos reais de verificação de circuitos, a quantidade
+de variáveis chegaria a casa de milhares ou centenas de milhares,
+assim, SAT solvers são exemplos de que, mesmo com uma complexidade muito alta,
+podemos resolver problemas de tamanho expressívos utilizando poucos recursos,
+em pouco tempo. 
+
+Conseguimos verificar propriedades de circuitos combinatórios digitais
+simples. Utilizando um compilador de lógica proposicional para CNF poderiamos
+verificar propriedades mais avançadas, como a releção entre propriedade
+de input e output com o uso de implicações, com uma possível continuação
+do desenvolvimento deste software. 
+
