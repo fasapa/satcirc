@@ -2,7 +2,6 @@
 #include<cstdlib>
 #include<string>
 
-//Ainda nao foi implementada
 #include "CnfParser.h"
 %}
 
