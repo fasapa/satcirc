@@ -29,13 +29,15 @@ Verificador de propriedades de circuitos digitais combinatórios.
 
 ### Geração do parser e scanner.
 ```shell
-bison *.y
-flex -Cf *.l
+bison CircuitParser.y 
+bison CnfParser.y
+flex -Cf CircuitScanner.l
+flex -Cf CnfScanner.l
 ```
 ### Compilação MiniSat
 ```shell
 cd src
-export MROOT=$(pwd)
+export MROOT=$(pwd)/minisat
 make libr -C minisat/simp/
 ln -s minisat/simp/lib_release.a minisat.a
 ```
@@ -43,5 +45,5 @@ ln -s minisat/simp/lib_release.a minisat.a
 ### Compilação SATCirc
 ```shell
 cd src
-g++ -Iminisat -std=c++11 -O3 *.c *.cc minisat.a -lz -o satcirc
+g++ -Iminisat -std=c++11 -O3 -g *.c *.cc minisat.a -lz -o satcirc
 ```
